@@ -1,4 +1,4 @@
-require "RMagick"
+require "rmagick"
 require "fileutils"
 
 class MemeGenerator
@@ -8,26 +8,7 @@ class MemeGenerator
 
   class << self
 
-    # @return [Array<String>] Returns a list of short names for memes
-    #   available locally on disk.
-    def memes
-      meme_paths.keys
-    end
-
-    # @return [Hash] Returns a hash of of available memes.  Hash keys are
-    #   the short names for the memes and the values are paths to the meme
-    #   image on disk.
-    def meme_paths
-      local_image_path = File.expand_path("~/.memegen")
-      base = File.join(File.dirname(__FILE__), "..", "generators")
-      files = Dir.glob(["#{base}/*", "#{local_image_path}/*.*"])
-      files.inject({}) do |images,path|
-        name = path.split('/').last.sub(/\.jpg$/, '')
-        images.merge(name => path)
-      end
-    end
-
-    def generate(path, top, bottom)
+    def generate(path, folder, imagename, top, bottom)
       top = (top || '').upcase
       bottom = (bottom || '').upcase
 
@@ -72,8 +53,9 @@ class MemeGenerator
           self.pointsize = pointsize * scale
         end
       end
-
-      output_path = "/tmp/meme-#{Time.now.to_i}.jpeg"
+      
+      output_path = "#{folder}/#{imagename}.jpg"
+      #print output_path
       canvas.write(output_path)
       output_path
     end
